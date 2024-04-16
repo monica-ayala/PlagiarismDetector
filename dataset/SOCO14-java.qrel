@@ -1,84 +1,169 @@
-003.java 004.java
-005.java 006.java
-008.java 010.java
-014.java 021.java
-015.java 023.java
-016.java 024.java
-017.java 022.java
-030.java 032.java
-033.java 034.java
-042.java 044.java
-043.java 251.java
-045.java 047.java
-048.java 051.java
-048.java 183.java
-048.java 257.java
-048.java 258.java
-049.java 050.java
-051.java 183.java
-051.java 257.java
-051.java 258.java
-052.java 053.java
-059.java 159.java
-059.java 183.java
-059.java 250.java
-059.java 258.java
-061.java 216.java
-062.java 064.java
-069.java 070.java
-078.java 079.java
-084.java 085.java
-086.java 087.java
-086.java 155.java
-086.java 222.java
-086.java 242.java
-086.java 243.java
-087.java 155.java
-087.java 222.java
-087.java 242.java
-087.java 243.java
-089.java 090.java
-094.java 098.java
-101.java 212.java
-103.java 105.java
-106.java 111.java
-107.java 108.java
-107.java 112.java
-107.java 113.java
-108.java 112.java
-108.java 113.java
-112.java 113.java
-117.java 119.java
-131.java 133.java
-135.java 174.java
-136.java 173.java
-137.java 171.java
-140.java 142.java
-143.java 145.java
-146.java 147.java
-148.java 150.java
-153.java 155.java
-153.java 222.java
-155.java 222.java
-155.java 243.java
-158.java 161.java
-159.java 250.java
-175.java 180.java
-181.java 182.java
-183.java 185.java
-183.java 258.java
-185.java 258.java
-188.java 190.java
-191.java 193.java
-195.java 218.java
-201.java 209.java
-202.java 208.java
-211.java 216.java
-221.java 224.java
-228.java 230.java
-232.java 233.java
-235.java 237.java
-238.java 240.java
-242.java 243.java
-244.java 246.java
-257.java 258.java
+sub1 sub2 verdict
+003.java 004.java 1
+005.java 006.java 1
+008.java 010.java 1
+014.java 021.java 1
+015.java 023.java 1
+016.java 024.java 1 
+017.java 022.java 1
+030.java 032.java 1
+033.java 034.java 1
+042.java 044.java 1
+043.java 251.java 1
+045.java 047.java 1
+048.java 051.java 1
+048.java 183.java 1
+048.java 257.java 1
+048.java 258.java 1
+049.java 050.java 1
+051.java 183.java 1
+051.java 257.java 1
+051.java 258.java 1
+052.java 053.java 1
+059.java 159.java 1
+059.java 183.java 1
+059.java 250.java 1
+059.java 258.java 1
+061.java 216.java 1
+062.java 064.java 1
+069.java 070.java 1
+078.java 079.java 1
+084.java 085.java 1
+086.java 087.java 1
+086.java 155.java 1
+086.java 222.java 1
+086.java 242.java 1
+086.java 243.java 1
+087.java 155.java 1
+087.java 222.java 1
+087.java 242.java 1
+087.java 243.java 1
+089.java 090.java 1
+094.java 098.java 1
+101.java 212.java 1
+103.java 105.java 1
+106.java 111.java 1
+107.java 108.java 1
+107.java 112.java 1
+107.java 113.java 1
+108.java 112.java 1
+108.java 113.java 1
+112.java 113.java 1
+117.java 119.java 1
+131.java 133.java 1
+135.java 174.java 1
+136.java 173.java 1
+137.java 171.java 1
+140.java 142.java 1
+143.java 145.java 1
+146.java 147.java 1
+148.java 150.java 1
+153.java 155.java 1
+153.java 222.java 1
+155.java 222.java 1
+155.java 243.java 1
+158.java 161.java 1
+159.java 250.java 1
+175.java 180.java 1
+181.java 182.java 1
+183.java 185.java 1
+183.java 258.java 1
+185.java 258.java 1
+188.java 190.java 1
+191.java 193.java 1
+195.java 218.java 1
+201.java 209.java 1
+202.java 208.java 1
+211.java 216.java 1
+221.java 224.java 1
+228.java 230.java 1
+232.java 233.java 1
+235.java 237.java 1
+238.java 240.java 1
+242.java 243.java 1
+244.java 246.java 1
+257.java 258.java 1
+003.java 005.java 0
+006.java 007.java 0
+008.java 009.java 0
+011.java 012.java 0
+013.java 014.java 0
+012.java 015.java 0
+017.java 019.java 0
+018.java 021.java 0
+022.java 020.java 0
+023.java 024.java 0
+025.java 026.java 0
+025.java 027.java 0
+026.java 028.java 0
+028.java 029.java 0
+030.java 031.java 0
+034.java 035.java 0
+035.java 036.java 0
+037.java 038.java 0
+039.java 038.java 0
+039.java 040.java 0
+040.java 041.java 0
+041.java 042.java 0
+044.java 131.java 0
+053.java 054.java 0
+063.java 068.java 0
+065.java 066.java 0
+071.java 072.java 0
+072.java 073.java 0
+073.java 074.java 0
+074.java 075.java 0
+075.java 076.java 0
+076.java 077.java 0
+077.java 078.java 0
+081.java 082.java 0
+082.java 083.java 0
+083.java 084.java 0
+085.java 086.java 0
+087.java 088.java 0
+091.java 092.java 0
+092.java 093.java 0
+093.java 094.java 0
+096.java 097.java 0
+097.java 098.java 0
+102.java 103.java 0
+104.java 105.java 0
+109.java 110.java 0
+111.java 112.java 0
+113.java 114.java 0
+115.java 116.java 0
+116.java 117.java 0
+120.java 121.java 0
+121.java 122.java 0
+122.java 123.java 0
+123.java 124.java 0
+124.java 125.java 0
+125.java 126.java 0
+126.java 127.java 0
+127.java 128.java 0
+128.java 129.java 0
+129.java 130.java 0
+130.java 131.java 0
+131.java 132.java 0
+132.java 133.java 0
+160.java 161.java 0
+161.java 162.java 0
+162.java 163.java 0
+163.java 164.java 0
+164.java 165.java 0
+165.java 166.java 0
+166.java 167.java 0
+167.java 168.java 0
+168.java 169.java 0
+169.java 170.java 0
+170.java 171.java 0
+171.java 172.java 0
+172.java 173.java 0
+173.java 174.java 0
+174.java 175.java 0
+203.java 204.java 0
+204.java 205.java 0
+205.java 206.java 0
+206.java 207.java 0
+207.java 208.java 0
+245.java 240.java 0
