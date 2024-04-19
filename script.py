@@ -12,7 +12,7 @@ def collect_unique_files_by_name(source_folder, destination_folder):
                 # Copy file to the destination folder
                 shutil.copy(os.path.join(root, filename), os.path.join(destination_folder, filename))
 
-source_directory = 'C:\\Users\\mayal\\PlagiarismDetector\\dataset\\java_pairs'  # Adjust to your source folder path
-destination_directory = 'C:\\Users\\mayal\\PlagiarismDetector\\dataset\\java_unique'  # Adjust to your destination folder path
+source_directory = 'D:\\Semester 8\\Taylor Swift'  # Adjust to your source folder path
+destination_directory = 'D:\\Semester 8\\TS_unique_2'  # Adjust to your destination folder path
 
 collect_unique_files_by_name(source_directory, destination_directory)
