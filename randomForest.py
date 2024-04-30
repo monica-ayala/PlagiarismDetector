@@ -1,3 +1,9 @@
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 import math
 import tensorflow as tf
 import numpy as np
@@ -15,6 +21,8 @@ from collections import defaultdict
 from sklearn.metrics.pairwise import cosine_similarity
 import csv
 import os
+from sklearn.metrics import confusion_matrix, classification_report
+
 
 train_pairs = pd.read_csv('dataset/train_pairs.csv', delimiter=',', usecols=["pairs"])['pairs'].values
 test_pairs = pd.read_csv('dataset/test_pairs.csv', delimiter=',', usecols=["pairs"])['pairs'].values
@@ -120,6 +128,21 @@ def load_pair(id1, id2, csv_path):
     
     return veredict, code1, code2
 
+load_java_code = lambda file: open(file, 'r').read()
+
+def gather_all_node_types(java_files):
+    all_node_types = set()
+    for java_file in java_files:
+        java_code = load_java_code(java_file) 
+        tree = parse_java_code_to_ast(java_code)
+        matrix = build_transition_matrix(tree)
+        for src in matrix:
+            all_node_types.add(src)
+            for dest in matrix[src]:
+                all_node_types.add(dest)
+    return sorted(all_node_types)
+
+
 def do_all(java_code1, java_code2, veredict):
     tree = parse_java_code_to_ast(java_code1)
     tree2 = parse_java_code_to_ast(java_code2)
@@ -129,55 +152,60 @@ def do_all(java_code1, java_code2, veredict):
     matrix2 = normalize_transitions(matrix2)
 
     node_types = get_node_types(matrix1, matrix2)  
-    print("Node Types:", node_types)
 
-    vector1 = matrix_to_vector(matrix1, node_types)
-    vector2 = matrix_to_vector(matrix2, node_types)
-    print("Shape:", len(vector1), len(vector2))
-
+    vector1 = matrix_to_vector(matrix1, all_node_types)
+    vector2 = matrix_to_vector(matrix2, all_node_types)
     cosine_sim = calculate_cosine_similarity(vector1, vector2)
 
-    # print("Cosine Similarity:", cosine_sim)
-    # print("Veredict:", veredict)
+    return cosine_sim, vector1, vector2
+
+java_files = [f"dataset/java/{file}" for file in os.listdir("dataset/java")]
+all_node_types = gather_all_node_types(java_files)
+def prepare_data(train_pairs, veredict_data):
+    X = []
+    y = []
+    for pair in train_pairs:
+        id1, id2 = pair.split('_')
+        veredict, java_code1, java_code2 = load_pair(id1, id2, "dataset/veredict.csv")
+        if veredict is not None and java_code1 is not None and java_code2 is not None:
+            cosine_sim, vector1, vector2 = do_all(java_code1, java_code2, veredict)
+            difference_vector = np.array(vector1) - np.array(vector2)
+            X.append(difference_vector)
+            y.append(int(veredict))
     
-    return cosine_sim
-    
-correct = 0
-for pair in train_pairs:
-    id1, id2 = pair.split('_')
-    print(f"Processing pair {id1} vs {id2}")
-    veredict, java_code1, java_code2 = load_pair(id1, id2, "dataset/veredict.csv")
-    cosine_sim = do_all(java_code1, java_code2, veredict)
-    treshold = 0.85
-    veredict_cs = 0
-    if(cosine_sim > treshold):
-        veredict_cs = 1
-    
-    if(veredict_cs == int(veredict)):
-        correct += 1
-    
-print(f"Accuracy: {correct} and {len(train_pairs)}")
-    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
 
-# Preprocess the data
-# Preprocess the data
-# TODO: Eliminate white spaces, comments, etc.
-# TODO: Generate AST Trees from the code
-# TODO: Calculate the Distance between the AST Trees (Maybe using Markov Chains)
+# Preparar los datos de entrenamiento
+X_train, X_test, y_train, y_test = prepare_data(train_pairs, veredict)
 
-# Create the dataset after preprocessing
-# TODO: Join the pairs and the veredict in a single dataset (feature, target)
+# Crear y entrenar el modelo de Random Forest
+rf_model = RandomForestClassifier(n_estimators=200, random_state=42)
+rf_model.fit(X_train, y_train)
+y_pred = rf_model.predict(X_test)
+# Evaluar el modelo
+accuracy = rf_model.score(X_test, y_test)
+print(f"Accuracy (Random Forest): {accuracy}")
 
-# Create the model
-# model = models.Sequential()
-# TODO: Choose the best model for the problem, for Classification. (CNN, RNN, Xgboost, etc.)
+# Calcular el F1-score
+f1 = f1_score(y_test, y_pred)
+print(f"F1-score: {f1}")
 
-# Compile the model
-# TODO: Change loss function as needed
-# model.compile(optimizer='adam',
-#               loss='sparse_categorical_crossentropy',
-#               metrics=['accuracy'])
+# Calcular la matriz de confusión
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:\n", cm)
 
-# Train the model and save the history
+# Calcula el reporte de clasificación
+report = classification_report(y_test, y_pred)
+print("Classification Report:\n", report)
 
-# Evaluate the model
+# Calcular la matriz de confusión
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Visualizar la matriz de confusión
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', cbar=False)
+plt.xlabel('Predicted labels')
+plt.ylabel('True labels')
+plt.title('Confusion Matrix')
+plt.show()

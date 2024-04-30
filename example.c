@@ -2,7 +2,7 @@
 #include<string.h>
 #include<strings.h>
 #include<stdlib.h>
-#include<sys/time.h>
+#include<sys/time.h> 
 
 
 public static void main()
