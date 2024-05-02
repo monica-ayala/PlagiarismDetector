@@ -19,6 +19,9 @@ def random_forest_model():
 
     accuracy = rf_model.score(X_test, y_test)
     print(f"Accuracy (Random Forest): {accuracy}")
+    
+    accuracy = rf_model.score(X_train, y_train)
+    print(f"Accuracy (Random Forest) TRAIN: {accuracy}")
 
     cm = confusion_matrix(y_test, y_pred)
     print("Confusion Matrix:\n", cm)
@@ -59,4 +62,3 @@ def xgboost_model():
     plt.show()
  
 xgboost_model()
-random_forest_model()

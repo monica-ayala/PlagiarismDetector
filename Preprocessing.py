@@ -9,6 +9,9 @@ from collections import defaultdict
 from sklearn.metrics.pairwise import cosine_similarity, pairwise_distances
 import csv
 import os
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import jaccard_score
+import numpy as np
 
 all_pairs = pd.read_csv('dataset/all_pairs.csv', delimiter=',', usecols=["pairs"])['pairs'].values
 
@@ -35,7 +38,19 @@ def traverse_ast(node, transitions, last_node_type=None):
         
         for child in children:
             traverse_ast(child, transitions, current_node_type)
-
+def get_ngram_similarity(text1, text2, n=2):
+    vectorizer = CountVectorizer(analyzer='char', ngram_range=(n, n))
+    # Transform texts into n-gram frequency vectors
+    ngrams1 = vectorizer.fit_transform([text1])
+    ngrams2 = vectorizer.transform([text2])
+    
+    # Convert frequency vectors to binary vectors
+    ngrams1_binary = (ngrams1.toarray()[0] > 0).astype(int)
+    ngrams2_binary = (ngrams2.toarray()[0] > 0).astype(int)
+    
+    # Compute the Jaccard similarity between the two binary n-gram sets
+    similarity = jaccard_score(ngrams1_binary, ngrams2_binary, average='binary')
+    return similarity
 
 def build_transition_matrix(tree):
     transitions = defaultdict(lambda: defaultdict(int))
@@ -146,7 +161,8 @@ def do_all(java_code1, java_code2, veredict):
     euc = pairwise_distances(vector1, vector2, metric='euclidean')[0][0]
     man = pairwise_distances(vector1, vector2, metric='manhattan')[0][0]
     che = pairwise_distances(vector1, vector2, metric='chebyshev')[0][0]
-    return cosine_sim, euc, man, che, vector1, vector2
+    bigram_similarity = get_ngram_similarity(java_code1, java_code2, 5)
+    return cosine_sim, euc, man, che, bigram_similarity, vector1, vector2
 
 java_files = [f"dataset/java/{file}" for file in os.listdir("dataset/java")]
 all_node_types = gather_all_node_types(java_files)
@@ -158,9 +174,9 @@ def prepare_data(all_pairs):
         id1, id2 = pair.split('_')
         veredict, java_code1, java_code2 = load_pair(id1, id2, "dataset/veredict.csv")
         if veredict is not None and java_code1 is not None and java_code2 is not None:
-            cosine_sim, euc, man, che, vector1, vector2 = do_all(java_code1, java_code2, veredict)
+            cosine_sim, euc, man, che, bigram_similarity, vector1, vector2 = do_all(java_code1, java_code2, veredict)
             difference_vector = np.array(vector1) - np.array(vector2)
-            feature_vector = np.append(difference_vector, [cosine_sim, euc, man, che])
+            feature_vector = np.append(difference_vector, [cosine_sim, euc, man, che, bigram_similarity])
             X.append(feature_vector)
             y.append(int(veredict))
     
