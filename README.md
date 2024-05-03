@@ -22,3 +22,6 @@ FINAL DATASET:
 
 #### Documentation
 [Herramientas para detectar infracciones a los derechos de autor en Java utilizando Inteligencia Artificial, Métodos Cuantitativos y de Compiladores](https://docs.google.com/document/d/19V64_o4n15zuqyy4anK_1IJRkxk3AjJ8yZkmuF-rHno/edit)
+
+#### Presentation
+[Presentación Final](https://www.canva.com/design/DAGEBwPkF-4/aiqGlMeEVjxUSvAnBfgk-w/view?utm_content=DAGEBwPkF-4&utm_campaign=designshare&utm_medium=link&utm_source=editor)
