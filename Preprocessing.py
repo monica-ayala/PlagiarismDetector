@@ -38,17 +38,15 @@ def traverse_ast(node, transitions, last_node_type=None):
         
         for child in children:
             traverse_ast(child, transitions, current_node_type)
+            
 def get_ngram_similarity(text1, text2, n=2):
     vectorizer = CountVectorizer(analyzer='char', ngram_range=(n, n))
-    # Transform texts into n-gram frequency vectors
     ngrams1 = vectorizer.fit_transform([text1])
     ngrams2 = vectorizer.transform([text2])
     
-    # Convert frequency vectors to binary vectors
     ngrams1_binary = (ngrams1.toarray()[0] > 0).astype(int)
     ngrams2_binary = (ngrams2.toarray()[0] > 0).astype(int)
     
-    # Compute the Jaccard similarity between the two binary n-gram sets
     similarity = jaccard_score(ngrams1_binary, ngrams2_binary, average='binary')
     return similarity
 
@@ -144,6 +142,14 @@ def gather_all_node_types(java_files):
             print(f"Error al leer el archivo {java_file}: {e}")
     return sorted(all_node_types)
 
+def average_line_length_from_string(code):
+    lines = code.splitlines()  
+    if not lines:
+        return 0 
+    total_length = sum(len(line.strip()) for line in lines)  
+    average_length = total_length / len(lines) if lines else 0  
+    return average_length
+    
 def do_all(java_code1, java_code2, veredict):
     tree = parse_java_code_to_ast(java_code1)
     tree2 = parse_java_code_to_ast(java_code2)
@@ -152,17 +158,26 @@ def do_all(java_code1, java_code2, veredict):
     matrix1 = normalize_transitions(matrix1)
     matrix2 = normalize_transitions(matrix2)
 
+    node_types = get_node_types(matrix1, matrix2)
     vector1 = matrix_to_vector(matrix1, all_node_types)
     vector2 = matrix_to_vector(matrix2, all_node_types)
-    cosine_sim = calculate_cosine_similarity(vector1, vector2)
-    vector1 = np.array(vector1).reshape(1, -1)
-    vector2 = np.array(vector2).reshape(1, -1)
+    vec1 = matrix_to_vector(matrix1, node_types)
+    vec2 = matrix_to_vector(matrix2, node_types)
+    cosine_sim = calculate_cosine_similarity(vec1, vec2)
+    vec1 = np.array(vec1).reshape(1, -1)
+    vec2 = np.array(vec2).reshape(1, -1)
 
-    euc = pairwise_distances(vector1, vector2, metric='euclidean')[0][0]
-    man = pairwise_distances(vector1, vector2, metric='manhattan')[0][0]
-    che = pairwise_distances(vector1, vector2, metric='chebyshev')[0][0]
-    bigram_similarity = get_ngram_similarity(java_code1, java_code2, 5)
-    return cosine_sim, euc, man, che, bigram_similarity, vector1, vector2
+    euc = pairwise_distances(vec1, vec2, metric='euclidean')[0][0]
+    man = pairwise_distances(vec1, vec2, metric='manhattan')[0][0]
+    che = pairwise_distances(vec1, vec2, metric='chebyshev')[0][0]
+    bigram_similarity = get_ngram_similarity(java_code1, java_code2, 4)
+    
+    avg1 = average_line_length_from_string(java_code1)
+    avg2 = average_line_length_from_string(java_code2)
+    avg_diff = abs(avg1 - avg2)
+    avg_len_diff = abs(len(java_code1.splitlines()) - len(java_code2.splitlines()))
+
+    return cosine_sim, euc, man, che, bigram_similarity, avg_diff, avg_len_diff, vector1, vector2
 
 java_files = [f"dataset/java/{file}" for file in os.listdir("dataset/java")]
 all_node_types = gather_all_node_types(java_files)
@@ -174,9 +189,9 @@ def prepare_data(all_pairs):
         id1, id2 = pair.split('_')
         veredict, java_code1, java_code2 = load_pair(id1, id2, "dataset/veredict.csv")
         if veredict is not None and java_code1 is not None and java_code2 is not None:
-            cosine_sim, euc, man, che, bigram_similarity, vector1, vector2 = do_all(java_code1, java_code2, veredict)
+            cosine_sim, euc, man, che, bigram_similarity, avg_diff, avg_len_diff, vector1, vector2 = do_all(java_code1, java_code2, veredict)
             difference_vector = np.array(vector1) - np.array(vector2)
-            feature_vector = np.append(difference_vector, [cosine_sim, euc, man, che, bigram_similarity])
+            feature_vector = np.append(difference_vector, [cosine_sim, euc, man, che, bigram_similarity, avg_diff, avg_len_diff])
             X.append(feature_vector)
             y.append(int(veredict))
     
@@ -186,6 +201,7 @@ def prepare_data(all_pairs):
 X_train, X_test, y_train, y_test = prepare_data(all_pairs)
 
 def save_data(X_train, X_test, y_train, y_test):
+
     np.save("dataset/X_train.npy", X_train)
     np.save("dataset/X_test.npy", X_test)
     np.save("dataset/y_train.npy", y_train)
